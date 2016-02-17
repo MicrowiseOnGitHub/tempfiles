@@ -1,0 +1,55 @@
+This file is to show the behavior of patch 277956 (https://review.openstack.org/#/c/277956/).
+
+First, I created a testring, and then removed/added some devies. With the current swift-ring-builder of the master brach, command line 
+"swifit-ring-builder testring" would return:
+
+testring, build version 43
+1024 partitions, 2.000000 replicas, 2 regions, 8 zones, 17 devices, 2.05 balance, 6.05 dispersion
+The minimum number of hours before a partition can be reassigned is 1 (0:00:00 remaining)
+The overload factor is 0.00% (0.000000)
+Ring file testring.ring.gz is up-to-date
+Devices:    id  region  zone      ip address  port  replication ip  replication port      name weight partitions balance flags meta
+             0       1     1         1.0.0.1  6010         1.0.0.1              6010      sdb1   1.00        120   -0.39       
+             1       1     1         1.0.0.1  6010         1.0.0.1              6010      sdb5   1.00        120   -0.39       
+             2       1     2         1.0.0.1  6020         1.0.0.1              6020      sdb2   1.00        121    0.44       
+             3       2     3         1.0.0.2  6000         1.0.0.2              6000      sdc3   1.00        122    1.27       
+             4       1     3         1.0.0.1  6030         1.0.0.1              6030      sdb3   1.00        121    0.44       
+             5       1     3         1.0.0.2  6000         1.0.0.2              6000      sdc2   1.00        120   -0.39       
+             6       1     4         1.0.0.2  6000         1.0.0.2              6000      sdc4   1.00        121    0.44       
+             7       2     1         3.0.0.1  6000         3.0.0.1              6000      sda1   1.00        121    0.44       
+             8       2     1         3.0.0.1  6000         3.0.0.1              6000      sda2   1.00        120   -0.39       
+             9       2     1         2.0.0.1  6010         2.0.0.1              6010      sdb5   1.00        121    0.44       
+            10       1     1         3.0.0.1  6000         3.0.0.1              6000       sdc   1.00        118   -2.05       
+            11       2     2         2.0.0.1  6020         2.0.0.1              6020      sdb6   1.00        121    0.44       
+            12       2     3         2.0.0.1  6030         2.0.0.1              6030      sdb3   1.00        120   -0.39       
+            14       2     1         3.0.0.1  6000         3.0.0.1              6000      sda3   1.00        120   -0.39       
+            15       2     4         2.0.0.1  6040         2.0.0.1              6040      sdb8   1.00        121    0.44       
+            16       1     1         1.0.0.2  6000         1.0.0.2              6000      sdc1   1.00        121    0.44       
+            17       2     1         3.0.0.1  6000         3.0.0.1              6000       sda   1.00        120   -0.39       
+
+With patch 277956, "swifit-ring-builder testring" would return:
+
+testring, build version 43
+1024 partitions, 2.000000 replicas, 2 regions, 8 zones, 17 devices, 2.05 balance, 6.05 dispersion
+The minimum number of hours before a partition can be reassigned is 1 (0:00:00 remaining)
+The overload factor is 0.00% (0.000000)
+Ring file testring.ring.gz is up-to-date
+Devices are ordered by (region, zone, ip address, name)
+Devices:    id  region  zone      ip address  port  replication ip  replication port      name weight partitions balance flags meta
+             0       1     1         1.0.0.1  6010         1.0.0.1              6010      sdb1   1.00        120   -0.39       
+             1       1     1         1.0.0.1  6010         1.0.0.1              6010      sdb5   1.00        120   -0.39       
+            16       1     1         1.0.0.2  6000         1.0.0.2              6000      sdc1   1.00        121    0.44       
+            10       1     1         3.0.0.1  6000         3.0.0.1              6000       sdc   1.00        118   -2.05       
+             2       1     2         1.0.0.1  6020         1.0.0.1              6020      sdb2   1.00        121    0.44       
+             4       1     3         1.0.0.1  6030         1.0.0.1              6030      sdb3   1.00        121    0.44       
+             5       1     3         1.0.0.2  6000         1.0.0.2              6000      sdc2   1.00        120   -0.39       
+             6       1     4         1.0.0.2  6000         1.0.0.2              6000      sdc4   1.00        121    0.44       
+             9       2     1         2.0.0.1  6010         2.0.0.1              6010      sdb5   1.00        121    0.44       
+            17       2     1         3.0.0.1  6000         3.0.0.1              6000       sda   1.00        120   -0.39       
+             7       2     1         3.0.0.1  6000         3.0.0.1              6000      sda1   1.00        121    0.44       
+             8       2     1         3.0.0.1  6000         3.0.0.1              6000      sda2   1.00        120   -0.39       
+            14       2     1         3.0.0.1  6000         3.0.0.1              6000      sda3   1.00        120   -0.39       
+            11       2     2         2.0.0.1  6020         2.0.0.1              6020      sdb6   1.00        121    0.44       
+             3       2     3         1.0.0.2  6000         1.0.0.2              6000      sdc3   1.00        122    1.27       
+            12       2     3         2.0.0.1  6030         2.0.0.1              6030      sdb3   1.00        120   -0.39       
+            15       2     4         2.0.0.1  6040         2.0.0.1              6040      sdb8   1.00        121    0.44       
