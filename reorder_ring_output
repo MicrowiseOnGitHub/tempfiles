@@ -53,3 +53,5 @@ Devices:    id  region  zone      ip address  port  replication ip  replication 
              3       2     3         1.0.0.2  6000         1.0.0.2              6000      sdc3   1.00        122    1.27       
             12       2     3         2.0.0.1  6030         2.0.0.1              6030      sdb3   1.00        120   -0.39       
             15       2     4         2.0.0.1  6040         2.0.0.1              6040      sdb8   1.00        121    0.44       
+
+We can see that the devices were sorted by (region, zone, ip, name).
